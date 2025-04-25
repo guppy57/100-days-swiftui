@@ -17,6 +17,9 @@ struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
 	
+	@State private var userFlag = 0
+	@State private var animationAmount = 0.0
+	
 	var roundsPerGame = 8
     
     var body: some View {
@@ -43,12 +46,19 @@ struct ContentView: View {
                     
                     ForEach(0..<3) { number in
                         Button {
+							userFlag = number
+							
+							withAnimation {
+								animationAmount = 360
+							}
+							
                             flagTapped(number)
                         } label: {
                             Image(countries[number])
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .shadow(radius: 5)
                         }
+						.rotation3DEffect(.degrees(number == userFlag ? animationAmount : 0), axis: (x: 0, y: 1, z: 0))
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -93,6 +103,8 @@ struct ContentView: View {
 			var flagName = countries[number]
             scoreTitle = "Wrong! That's the flag of \(flagName)"
         }
+		
+		animationAmount = 0
 		
 		if (roundsPlayed == roundsPerGame) {
 			showingFinalRound = true
